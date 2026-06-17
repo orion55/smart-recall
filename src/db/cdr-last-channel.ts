@@ -16,11 +16,11 @@ export const getLastAnsweredChannel = async (phone: string): Promise<string | nu
       FROM
         cdr t
       WHERE
-        start > NOW() - INTERVAL 1 HOUR
+          calldate > NOW() - INTERVAL 1 HOUR
         AND disposition = 'ANSWERED'
         AND dst LIKE ?
       ORDER BY
-        start DESC
+        calldate DESC
       LIMIT 1
       `,
       [`%${phone}%`],
@@ -28,6 +28,6 @@ export const getLastAnsweredChannel = async (phone: string): Promise<string | nu
 
     return rows.length > 0 ? rows[0].channel_short : null;
   } finally {
-    connection.end();
+    await connection.end();
   }
 };
