@@ -1,0 +1,41 @@
+{
+  "name": "smart-recall",
+  "description": "Определение номера менеджера по продажам",
+  "version": "1.0.0",
+  "author": {
+    "name": "Олег Гребенёв"
+  },
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "routing"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts",
+    "mock": "npm run build && npx tsx tools/mock-asterisk.ts",
+    "biome": "npx @biomejs/biome check --write",
+    "deploy:copy": "scp dist/index.js root@192.168.1.105:/usr/share/asterisk/agi-bin/smart-recall/",
+    "deploy:remote": "ssh root@192.168.1.105 \"/usr/bin/bash '/usr/share/asterisk/agi-bin/smart-recall/make-agi.sh'\"",
+    "deploy": "npm run build && npm run deploy:copy && npm run deploy:remote"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.0",
+    "@types/node": "^25.9.3",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "mysql2": "^3.22.5"
+  }
+}
