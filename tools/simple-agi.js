@@ -1,4 +1,4 @@
-#!/root/.nvm/versions/node/v20.20.2/bin/node
+#!/usr/local/bin/node
 
 const readline = require('node:readline');
 

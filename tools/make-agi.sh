@@ -8,7 +8,7 @@ AGI_DIR="/usr/share/asterisk/agi-bin/smart-recall"
 OLD_PATH="${AGI_DIR}/${OLD_NAME}"
 NEW_PATH="${AGI_DIR}/${NEW_NAME}"
 
-NODE_PATH="/root/.nvm/versions/node/v20.20.2/bin/node"
+NODE_PATH="/usr/local/bin/node"
 SHEBANG="#!${NODE_PATH}"
 
 set -e
