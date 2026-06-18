@@ -11,17 +11,15 @@ export const getLastAnsweredChannel = async (phone: string): Promise<string | nu
   try {
     const [rows] = await connection.execute<LastAnsweredChannelRow[]>(
       `
-      SELECT
-        SUBSTRING_INDEX(t.channel, '-', 1) AS channel_short
-      FROM
-        cdr t
-      WHERE
-          calldate > NOW() - INTERVAL 1 HOUR
-        AND disposition = 'ANSWERED'
-        AND dst LIKE ?
-      ORDER BY
-        calldate DESC
-      LIMIT 1
+          SELECT SUBSTRING_INDEX(cdr.dstchannel, '-', 1) AS channel_short
+          FROM cdr
+          WHERE calldate > NOW() - INTERVAL 1 HOUR
+            AND disposition = 'ANSWERED'
+            AND src LIKE ?
+            AND dstchannel IS NOT NULL
+          ORDER BY
+              calldate DESC
+          LIMIT 1
       `,
       [`%${phone}%`],
     );

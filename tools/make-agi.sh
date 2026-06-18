@@ -32,3 +32,6 @@ fi
 
 # атомарная замена
 mv "$OLD_PATH" "$NEW_PATH"
+
+# права для Asterisk
+chown asterisk:asterisk "$NEW_PATH"
