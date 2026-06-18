@@ -54,30 +54,23 @@ function send(cmd) {
   });
 }
 
-function sanitizePhone(input) {
-  if (!input) return '';
-  const raw = String(input).trim();
-  const hasPlus = raw.startsWith('+');
-  const digits = raw.replace(/[^\d]/g, '');
-  if (!digits) return '';
-  return hasPlus ? `+${digits}` : digits;
+function escapeAgiString(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
 (async () => {
   await waitEnvReady();
 
+  for (const [key, value] of Object.entries(env)) {
+    await send(`VERBOSE "AGI env ${escapeAgiString(`${key}=${value}`)}" 1`);
+  }
+
   // Аргумент #1 из dialplan: AGI(script.js,<phone>)
-  const rawPhone = process.argv[2] || '';
   const phone =
-    sanitizePhone(rawPhone) ||
-    sanitizePhone(env['agi_arg_1']) || // иногда Asterisk кладёт аргументы сюда
-    sanitizePhone(env['agi_callerid']) ||
-    sanitizePhone(env['agi_callerid_number']) ||
-    '';
+    [process.argv[2], env.agi_arg_1, env.agi_callerid, env.agi_callerid_number].find(Boolean) || '';
+  const safePhone = escapeAgiString(phone);
 
-  await send(`VERBOSE "Node AGI started. phone(raw)=${rawPhone} phone=${phone}" 1`);
-
-  const safePhone = String(phone).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  await send(`VERBOSE "Node AGI started. phone=${safePhone}" 1`);
   await send(`SET VARIABLE SALES_PHONE "${safePhone}"`);
 
   // пример
@@ -88,9 +81,7 @@ function sanitizePhone(input) {
   process.exit(0);
 })().catch(async (err) => {
   try {
-    const msg = String(err?.stack ? err.stack : err)
-      .replace(/\\/g, '\\\\')
-      .replace(/"/g, '\\"');
+    const msg = escapeAgiString(err?.stack ? err.stack : err);
     await send(`VERBOSE "Node AGI error: ${msg}" 1`);
   } catch {}
   process.exit(1);

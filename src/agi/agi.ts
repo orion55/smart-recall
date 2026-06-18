@@ -19,12 +19,12 @@ export const createAgiContext = (rl: readline.Interface): AgiContext => ({
 });
 
 const resolveEnvReady = (ctx: AgiContext): void => {
-  while (ctx.envWaiters.length) ctx.envWaiters.shift()!.resolve();
+  while (ctx.envWaiters.length) ctx.envWaiters.shift()?.resolve();
 };
 
 const rejectAllWaiters = (ctx: AgiContext, err: Error): void => {
-  while (ctx.envWaiters.length) ctx.envWaiters.shift()!.reject(err);
-  while (ctx.cmdWaiters.length) ctx.cmdWaiters.shift()!.reject(err);
+  while (ctx.envWaiters.length) ctx.envWaiters.shift()?.reject(err);
+  while (ctx.cmdWaiters.length) ctx.cmdWaiters.shift()?.reject(err);
 };
 
 export const handleIncomingLine = (ctx: AgiContext, line: string): void => {
