@@ -73,9 +73,7 @@ function escapeAgiString(value) {
   await send(`VERBOSE "Node AGI started. phone=${safePhone}" 1`);
   await send(`SET VARIABLE SALES_PHONE "${safePhone}"`);
 
-  // пример
   await send(`EXEC Playback hello-world`);
-  //  await send(`HANGUP`);
 
   rl.close();
   process.exit(0);
